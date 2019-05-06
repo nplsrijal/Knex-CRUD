@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CRUD</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/googlefonts.css">
+<link rel="stylesheet" href="assets/css/googlefontsmaterial.css">
+<link rel="stylesheet" href="assets/css/fontaswesome.css">
+<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="assets/css/toastr.css">
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
+<script src="assets/js/toastr.js"></script>
+
+
+</head>
+<body>
+    <div class="container">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-6">
+						<h2>Contact <b>List</b></h2>
+					</div>
+					<div class="col-sm-6">
+						<a href="#addEmployeeModal" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add Contact</span></a>
+					</div>
+                </div>
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+						
+						<th>First Name</th>
+						<th>Last Name</th>
+                        <th>Email</th>
+						<th>Contact Number</th>
+                        
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody  id="trcontact">
+                 
+                
+                </tbody>
+            </table>
+		
+        </div>
+    </div>
+	<!-- ADD Modal HTML -->
+	<div id="addEmployeeModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				
+					<div class="modal-header">						
+						<h4 class="modal-title">Add Contact</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">					
+						<div class="form-group">
+							<label>First Name</label>
+							<input type="text" class="form-control" id="firstname" required>
+						</div>
+						<div class="form-group">
+							<label>Last Name</label>
+							<input type="text" class="form-control" id="lastname" required>
+						</div>
+						<div class="form-group">
+							<label>Email</label>
+							<input type="email" class="form-control" id="email" required>
+						</div>
+						
+						<div class="form-group">
+							<label>Phone</label>
+							<input type="number" class="form-control" id="num" required>
+						</div>					
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+						<input type="submit" id="addcontact" class="btn btn-success" value="Add">
+					</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- Edit Modal HTML -->
+	<div id="editEmployeeModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				
+					<div class="modal-header">						
+						<h4 class="modal-title">Edit Contact</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">	
+						<input type="hidden" id="cid">				
+						<div class="form-group">
+							<label>First Name</label>
+							<input type="text" class="form-control" id="fname" required>
+						</div>
+						<div class="form-group">
+							<label>Last Name</label>
+							<input type="text" class="form-control" id="lname" required>
+						</div>
+						<div class="form-group">
+							<label>Email</label>
+							<input type="email" class="form-control" id="emailadd" required>
+						</div>
+						
+						<div class="form-group">
+							<label>Phone</label>
+							<input type="number" class="form-control" id="cnum" required>
+						</div>					
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+						<input type="submit" id="editcontact" class="btn btn-info" value="Save">
+					</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- Delete Modal HTML -->
+	<div id="deleteEmployeeModal" class="modal fade">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form>
+					<div class="modal-header">						
+						<h4 class="modal-title">Delete Employee</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					</div>
+					<div class="modal-body">
+						<input type="hidden" id="cdelid">					
+						<p>Are you sure you want to delete these Records?</p>
+						<p class="text-warning"><small>This action cannot be undone.</small></p>
+					</div>
+					<div class="modal-footer">
+						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+						<input type="submit" id="deletecontact" class="btn btn-danger" value="Delete">
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>   
+
+<script>
+    $(document).ready(function(){
+		get_Data();
+
+		
+	
+
+	$("#addcontact").click(function(){
+       const fname=$("#firstname").val();
+       const lname=$("#lastname").val();
+        const email=$("#email").val();
+	   const num=$("#num").val();
+	   
+	 
+
+// Check if empty of not
+if (fname  === '') {
+	toastr.error("First Name is Required.", "Error", {
+                 "closeButton": true,
+                   "timeOut": "5000",
+                   "extendedTimeOut": "1000",
+              });
+	return false;
+} 
+if(lname  === '') {
+	toastr.error("Last Name is Required.", "Error", {
+                 "closeButton": true,
+                   "timeOut": "5000",
+                   "extendedTimeOut": "1000",
+              });
+	return false;
+} 
+if(email  === '') {
+	toastr.error("Email is Required.", "Error", {
+                 "closeButton": true,
+                   "timeOut": "5000",
+                   "extendedTimeOut": "1000",
+              });
+	return false;
+}
+if(num  === '') {
+	toastr.error("Number is Required.", "Error", {
+                 "closeButton": true,
+                   "timeOut": "5000",
+                   "extendedTimeOut": "1000",
+              });
+	return false;
+}
+
+
+        $.post("http://localhost:3000/savecontact",{fname: fname,lname: lname,email:email,num:num}, function(data){
+          console.log(data.message);
+            if(data.message==='ok')
+            {
+			  //alert("Success");
+			  toastr.success("Sucessfully Added.", "Success", {
+                 "closeButton": true,
+                   "timeOut": "5000",
+                   "extendedTimeOut": "1000",
+              });
+			  $("#firstname").val("");
+			 $("#lastname").val("");
+      $("#email").val("");
+     $("#num").val("");
+
+			  get_Data();
+            }
+        });
+	  });
+	  
+	  $("#editcontact").click(function(){
+		  const cid=$("#cid").val();
+       const fname=$("#fname").val();
+       const lname=$("#lname").val();
+        const email=$("#emailadd").val();
+	   const num=$("#cnum").val();
+
+// Check if empty of not
+if (fname  === '') {
+	toastr.error("First Name is Required.", "Error", {
+                 "closeButton": true,
+                   "timeOut": "5000",
+                   "extendedTimeOut": "1000",
+              });
+	return false;
+} 
+if(lname  === '') {
+	toastr.error("Last Name is Required.", "Error", {
+                 "closeButton": true,
+                   "timeOut": "5000",
+                   "extendedTimeOut": "1000",
+              });
+	return false;
+} 
+if(email  === '') {
+	toastr.error("Email is Required.", "Error", {
+                 "closeButton": true,
+                   "timeOut": "5000",
+                   "extendedTimeOut": "1000",
+              });
+	return false;
+}
+if(num  === '') {
+	toastr.error("Number is Required.", "Error", {
+                 "closeButton": true,
+                   "timeOut": "5000",
+                   "extendedTimeOut": "1000",
+              });
+	return false;
+}
+	   $.ajax({
+       type:'PUT',
+	   dataType:'JSON',
+	   data:{cid:cid,fname: fname,lname: lname,email:email,num:num},
+       
+        url:'http://localhost:3000/editcontact',
+		success:function(data){
+			if(data.message==='ok')
+            {
+			  //alert("Success");
+			  toastr.success("Successfully Updated.", "Success", {
+                 "closeButton": true,
+                   "timeOut": "5000",
+                   "extendedTimeOut": "1000",
+              });
+			  $("#cid").val("");
+			  $("#fname").val("");
+			 $("#lname").val("");
+      $("#emailadd").val("");
+	 $("#cnum").val("");
+	 $('#editEmployeeModal').modal('hide');
+			  get_Data();
+            }
+		}
+	   });
+	  });
+	  $("#deletecontact").click(function(){
+		  const cid=$("#cdelid").val();
+      
+	   $.ajax({
+       type:'DELETE',
+	   dataType:'JSON',
+	   data:{cid:cid},
+       
+        url:'http://localhost:3000/deletecontact',
+		success:function(data){
+			if(data.message==='ok')
+            {
+			 // alert("Deleted");
+			 toastr.success("Successfully Deleted.", "Success", {
+                 "closeButton": true,
+                   "timeOut": "5000",
+                   "extendedTimeOut": "1000",
+              });
+			  get_Data();
+            }
+		}
+	   });
+      });
+	});
+	
+	function get_Data(){
+			let html='',
+		newtr = document.createElement( "tr" ),
+        existingbody = document.getElementById( "trcontact" );
+     
+		$.ajax({
+       type:'GET',
+       dataType:'JSON',
+       
+        url:'http://localhost:3000/',
+        success:function(data){
+
+            //console.log(data);
+         
+            $.each(data, function(data,value) {
+            
+                        
+                html +='<tr><td>'+value.firstname+'</td>'+
+                '<td>'+value.lastname+'</td>' +
+                '<td>'+value.email+'</td>'+
+				'<td>'+value.number+'</td>'+
+
+                  '<td>  <a href="javascript:void(0)" class="edit" onclick="load_model('+value.id+');"><i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i></a>'+
+				  '<a href="javascript:void(0)"  class="delete" onclick="delete_contact('+value.id+');" ><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a></td>'+
+
+				  '</tr>';
+            });
+            $( "tbody" ).html( html, [ newtr, existingbody ] );
+        
+            
+        }
+        
+	});
+
+		}
+
+		function load_model(id){
+	   // alert(id);
+	   $.ajax({
+       type:'GET',
+	   dataType:'JSON',
+	   data:{cid:id},
+       
+        url:'http://localhost:3000/getcontact_byid',
+        success:function(data){
+			$('#editEmployeeModal').modal();
+			 
+
+			$.each(data, function(data,value) {
+				$('[id="cid"]').val(id);
+			   $('[id="fname"]').val(value.firstname);
+			   $('[id="lname"]').val(value.lastname);
+			   $('[id="emailadd"]').val(value.email);
+			   $('[id="cnum"]').val(value.number);	
+					});
+			 
+                $('#editEmployeeModal').modal('show');
+              
+        }
+        
+	});
+       
+                                  
+	  }
+	  function delete_contact(id){
+	   // alert(id);
+	   $('#deleteEmployeeModal').modal();
+	   $('[id="cdelid"]').val(id);
+	   $('#deleteEmployeeModal').modal('show');
+
+	 
+       
+                                  
+      }
+  </script>
